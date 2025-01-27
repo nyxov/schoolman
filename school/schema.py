@@ -3,7 +3,7 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 from .models import Student, Teacher, Course
-from mumps import mumpsmth
+#from mumps import mumpsmth
 
 class StudentType(DjangoObjectType):
     class Meta:
