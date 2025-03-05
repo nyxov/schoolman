@@ -3,6 +3,7 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 from .models import Student, Teacher, Course
+import yottadb
 #from mumps import mumpsmth
 
 class StudentType(DjangoObjectType):
@@ -21,10 +22,14 @@ class Query(graphene.ObjectType):
     all_students = graphene.List(StudentType)
     all_teachers = graphene.List(TeacherType)
     all_courses = graphene.List(CourseType)
+    myteachers = graphene.List(TeacherType)
 
     def resolve_all_students(self, info):
         return Student.objects.all()
-
+    
+    def resolve_myteachers(self, info):
+        return Teacher.objects.filter(name__startswith='A')
+    
     def resolve_all_teachers(self, info):
         return Teacher.objects.all()
 
