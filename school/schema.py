@@ -36,4 +36,22 @@ class Query(graphene.ObjectType):
     def resolve_all_courses(self, info):
         return Course.objects.all()
 
-schema = graphene.Schema(query=Query)
+class CreateStudent(graphene.Mutation):
+    student = graphene.Field(StudentType)
+
+    class Arguments:
+        name = graphene.String(required=True)
+        age = graphene.Int(required=True)
+
+    def mutate(self, info, name, age):
+        student = Student.objects.create(name=name, age=age)
+        return CreateStudent(student=student)
+
+class Mutation(graphene.ObjectType):
+    create_student = CreateStudent.Field()
+
+# Создание схемы
+schema = graphene.Schema(query=Query, mutation=Mutation)
+
+
+

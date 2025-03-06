@@ -1,13 +1,13 @@
 from django.db import models
+from .basemodels import Human
 
-class Student(models.Model):
-    name = models.CharField(max_length=100)
-    age = models.IntegerField()
+class Student(Human):
+    interestas = models.CharField(max_length=100)
     def __str__(self):
         return self.name
 
-class Teacher(models.Model):
-    name = models.CharField(max_length=100)
+class Teacher(Human):
+    skill = models.CharField(max_length=100)
     def __str__(self):
         return self.name
 
