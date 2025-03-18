@@ -6,6 +6,7 @@ class AuthASGIMiddleware:
 
     async def __call__(self, scope, receive, send):
         # Проверяем авторизацию пользователя
+        '''
         if scope["type"] == "http":
             user = scope.get("user")
             if not user or not user.is_authenticated:
@@ -20,4 +21,6 @@ class AuthASGIMiddleware:
                 })
                 return
         
-        await self.app(scope, receive, send)
+        await self.app(scope, receive, send)'
+        '''
+        exit

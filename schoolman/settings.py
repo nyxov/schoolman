@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'schoolman.middleware.AuthASGIMiddleware'
 ]
+#    
 
 ROOT_URLCONF = 'schoolman.urls'
 
