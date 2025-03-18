@@ -1,10 +1,12 @@
 # schema.py
 
 import graphene
+import graphql_jwt
+from graphql_jwt.decorators import login_required
 from graphene_django.types import DjangoObjectType
 from graphql import GraphQLError
 from .models import Student, Teacher, Course
-import yottadb
+
 #from mumps import mumpsmth
 
 class StudentType(DjangoObjectType):
@@ -35,6 +37,7 @@ class Query(graphene.ObjectType):
 
     all_students = graphene.List(StudentType)
     all_teachers = graphene.List(TeacherType)
+    
     all_courses = graphene.List(CourseType)
     myteachers = graphene.List(TeacherType)
 
@@ -47,6 +50,7 @@ class Query(graphene.ObjectType):
     def resolve_all_teachers(self, info):
         return Teacher.objects.all()
 
+    @login_required
     def resolve_all_courses(self, info):
         return Course.objects.all()
 
@@ -63,6 +67,9 @@ class CreateStudent(graphene.Mutation):
 
 class Mutation(graphene.ObjectType):
     create_student = CreateStudent.Field()
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
 
 class AuthMiddleware:
     def resolve(self, next, root, info, **kwargs):

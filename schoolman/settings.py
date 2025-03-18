@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -55,9 +56,30 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'schoolman.middleware.AuthASGIMiddleware'
+    'django.contrib.auth.middleware.AuthenticationMiddleware'
 ]
+#'schoolman.middleware.AuthASGIMiddleware',
+
+
+GRAPHENE = {
+    "SCHEMA": "schoolman.myschema.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
+}
+
+GRAPHQL_JWT = {
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_EXPIRATION_DELTA": timedelta(minutes=10),
+}
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
 #    
+
 
 ROOT_URLCONF = 'schoolman.urls'
 
@@ -78,6 +100,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'schoolman.wsgi.application'
+#ASGI_APPLICATION = 'schoolman.asgi.application'
 
 
 # Database
