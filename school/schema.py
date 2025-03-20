@@ -27,6 +27,7 @@ class Query(graphene.ObjectType):
 
     private_data = graphene.String()
 
+    @login_required
     def resolve_private_data(self, info):
         # Проверяем, авторизован ли пользователь
         if not info.context.user.is_authenticated:
@@ -41,12 +42,15 @@ class Query(graphene.ObjectType):
     all_courses = graphene.List(CourseType)
     myteachers = graphene.List(TeacherType)
 
+    @login_required
     def resolve_all_students(self, info):
         return Student.objects.all()
     
+    @login_required
     def resolve_myteachers(self, info):
         return Teacher.objects.filter(name__startswith='A')
     
+    @login_required
     def resolve_all_teachers(self, info):
         return Teacher.objects.all()
 
@@ -68,20 +72,16 @@ class CreateStudent(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_student = CreateStudent.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+#    delete_token_cookie = graphql_jwt.DeleteJSONWebTokenCookie.Field()
+#    delete_refresh_token_cookie = graphql_jwt.DeleteRefreshTokenCookie.Field()
     verify_token = graphql_jwt.Verify.Field()
+    revoke_token = graphql_jwt.Revoke.Field()
     refresh_token = graphql_jwt.Refresh.Field()
 
-class AuthMiddleware:
-    def resolve(self, next, root, info, **kwargs):
-        # Проверяем, требуется ли авторизация для запрашиваемого поля
-        if hasattr(info.return_type, "auth_required") and info.return_type.auth_required:
-            if not info.context.user.is_authenticated:
-                raise GraphQLError("Authentication required.")
-        
-        return next(root, info, **kwargs)
+
 
 # Создание схемы
 schema = graphene.Schema(query=Query, mutation=Mutation) #, middleware = [AuthMiddleware()])
 
-middleware = [AuthMiddleware()]
+
 
