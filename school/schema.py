@@ -3,9 +3,11 @@
 import graphene
 import graphql_jwt
 from graphql_jwt.decorators import login_required
+from graphql_jwt import refresh_token
 from graphene_django.types import DjangoObjectType
 from graphql import GraphQLError
 from .models import Student, Teacher, Course
+from django.core.cache import cache
 
 #from mumps import mumpsmth
 
@@ -69,6 +71,19 @@ class CreateStudent(graphene.Mutation):
         student = Student.objects.create(name=name, age=age)
         return CreateStudent(student=student)
 
+class Logout(graphene.Mutation):
+    success = graphene.Boolean()
+
+    @classmethod
+    @login_required
+    def mutate(cls, root, info):
+        graphql_jwt.Revoke.Field()
+        user = info.context.user
+        cache_key = f"user_token_{user.id}"
+        cache.delete(cache_key)
+        # Дополнительная логика (например, очистка кэша)
+        return Logout(success=True)
+
 class Mutation(graphene.ObjectType):
     create_student = CreateStudent.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
@@ -77,7 +92,7 @@ class Mutation(graphene.ObjectType):
     verify_token = graphql_jwt.Verify.Field()
     revoke_token = graphql_jwt.Revoke.Field()
     refresh_token = graphql_jwt.Refresh.Field()
-
+    logout = Logout.Field()
 
 
 # Создание схемы
